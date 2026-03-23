@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Valle Cóndores">
+<title>Valle Cóndores · CRM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3248;
+    --accent: #4f8ef7;
+    --accent2: #7c5cfc;
+    --green: #2ecc8a;
+    --yellow: #f5a623;
+    --red: #e85d5d;
+    --text: #e8eaf0;
+    --muted: #6b7094;
+    --tag-b: #1e3a5f;
+    --tag-b-text: #7ab8ff;
+    --tag-c: #2d1e5f;
+    --tag-c-text: #b07aff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .logo {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .logo span { color: var(--accent); }
+
+  /* NAV TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 3px;
+  }
+  .tab {
+    flex: 1;
+    padding: 8px 4px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .tab.active {
+    background: var(--surface2);
+    color: var(--text);
+  }
+  .tab-icon { font-size: 14px; display: block; margin-bottom: 2px; }
+
+  /* SECTIONS */
+  .section { display: none; padding: 16px 16px 0; }
+  .section.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* SEARCH */
+  .search-wrap { margin-bottom: 14px; position: relative; }
+  .search-wrap input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+  }
+  .search-wrap::before {
+    content: '🔍';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  /* CASA CARD */
+  .casa-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .casa-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    border-radius: 3px 0 0 3px;
+    opacity: 0;
+    transition: opacity 0.18s;
+  }
+  .casa-card:hover::before, .casa-card:active::before { opacity: 1; }
+  .casa-card:active { transform: scale(0.99); }
+
+  .casa-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .casa-nro {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .casa-etapa {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+  }
+  .etapa-1 { background: #1a2e1a; color: #5ecf8a; }
+  .etapa-2 { background: #1a1f2e; color: #5e9acf; }
+
+  .modelo-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 5px;
+    letter-spacing: 0.05em;
+    margin-right: 6px;
+  }
+  .modelo-B { background: var(--tag-b); color: var(--tag-b-text); }
+  .modelo-C { background: var(--tag-c); color: var(--tag-c-text); }
+
+  .casa-precios {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .precio-lista {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .precio-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 500;
+  }
+  .desc-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--yellow);
+    background: rgba(245,166,35,0.12);
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+
+  .casa-meta {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .casa-meta span { display: flex; align-items: center; gap: 3px; }
+
+  .cotizar-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.18s;
+    letter-spacing: 0.02em;
+  }
+  .cotizar-btn:active { opacity: 0.85; }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .stat-num { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* MODAL / COTIZADOR */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px 40px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 92vh;
+    overflow-y: auto;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .modal-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  /* FORM ELEMENTS */
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.18s;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--accent);
+  }
+  .field input::placeholder { color: var(--muted); }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* RESULTADO COTIZACIÓN */
+  .resultado {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 16px;
+    display: none;
+  }
+  .resultado.show { display: block; }
+
+  .resultado-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .resultado-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .res-item { }
+  .res-item .res-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+  .res-item .res-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .res-item.highlight .res-val {
+    font-size: 20px;
+    color: var(--green);
+    font-weight: 700;
+  }
+  .res-item.highlight-uf .res-val {
+    font-size: 16px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+  /* BUTTONS */
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: opacity 0.18s;
+  }
+  .btn-primary:active { opacity: 0.85; }
+
+  .btn-wsp {
+    width: 100%;
+    padding: 13px;
+    background: #1a3b26;
+    border: 1px solid #2d6b43;
+    border-radius: 12px;
+    color: #4cd97b;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.18s;
+  }
+  .btn-wsp.show { display: flex; }
+  .btn-wsp:active { opacity: 0.85; }
+
+  .btn-close {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 0 16px;
+    z-index: 100;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px 0;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 500;
+    transition: color 0.18s;
+  }
+  .nav-item.active { color: var(--accent); }
+  .nav-item .nav-icon { font-size: 20px; }
+
+  /* CLIENTES SECTION — placeholder */
+  .coming-soon {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .coming-soon .icon { font-size: 48px; margin-bottom: 16px; }
+  .coming-soon h3 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
+  .coming-soon p { font-size: 13px; line-height: 1.6; }
+
+  /* CAMPO CLIENTE EN COTIZADOR */
+  .client-section {
+    background: rgba(79, 142, 247, 0.07);
+    border: 1px solid rgba(79, 142, 247, 0.2);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .client-section-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  /* PRECIO CON/SIN DESC TOGGLE */
+  .precio-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .precio-opt {
+    flex: 1;
+    padding: 10px 8px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.18s;
+  }
+  .precio-opt.active {
+    border-color: var(--accent);
+    color: var(--text);
+    background: rgba(79,142,247,0.1);
+  }
+  .precio-opt .opt-uf {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .error-msg {
+    display: none;
+    background: rgba(232,93,93,0.12);
+    border: 1px solid rgba(232,93,93,0.35);
+    border-radius: 10px;
+    color: #e85d5d;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .error-msg.show { display: block; }
+
+  /* UF HEADER */
+  .uf-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: border-color 0.18s;
+  }
+  .uf-header:hover { border-color: var(--accent); }
+  .uf-header-label { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; }
+  .uf-header-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 600; }
+  .uf-header-edit { font-size: 10px; color: var(--muted); }
+  .uf-header input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    width: 72px;
+    padding: 0;
+  }
+
+  /* POST-WSP BUTTONS */
+  .post-wsp {
+    display: none;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .post-wsp.show { display: flex; }
+  .btn-nueva-cot {
+    flex: 1;
+    padding: 12px 8px;
+    background: rgba(79,142,247,0.1);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    color: var(--accent);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.18s;
+  }
+  .btn-nueva-cot:active { opacity: 0.8; }
+  .btn-nuevo-cli {
+    flex: 1;
+    padding: 12px 8px;
+    background: rgba(124,92,252,0.1);
+    border: 1px solid var(--accent2);
+    border-radius: 12px;
+    color: var(--accent2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.18s;
+  }
+  .btn-nuevo-cli:active { opacity: 0.8; }
+
+  /* TABLA RESULTADO */
+  .res-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2px;
+  }
+  .res-table thead th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 4px 6px 8px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+  }
+  .res-table thead th:first-child { text-align: left; }
+  .res-table tbody tr { border-bottom: 1px solid rgba(46,50,72,0.5); }
+  .res-table tbody tr:last-child { border-bottom: none; }
+  .res-table tbody td {
+    padding: 10px 6px;
+    font-size: 12px;
+    text-align: right;
+    color: var(--muted);
+    vertical-align: middle;
+  }
+  .res-table tbody td:first-child {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .res-table .col-uf {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .res-table .col-pesos {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .res-table .col-pct {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 36px;
+  }
+  .res-table tr.row-dividendo td { padding-top: 12px; padding-bottom: 4px; }
+  .res-table tr.row-dividendo .col-uf {
+    color: var(--accent);
+    font-size: 15px;
+  }
+  .res-table tr.row-dividendo .col-pesos {
+    color: var(--green);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* BARRA DE ORDEN */
+  .sort-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    align-items: center;
+  }
+  .sort-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .sort-btn {
+    padding: 5px 11px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .sort-btn.active {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ==================== CLIENTES CSS ==================== */
+  .cli-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    align-items: center;
+  }
+  .cli-search {
+    flex: 1;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+  }
+  .cli-search:focus { border-color: var(--accent); }
+  .btn-nuevo-cli-main {
+    padding: 10px 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* CLIENTE CARD */
+  .cli-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cli-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+  .cli-card.estado-nuevo::before { background: var(--accent); }
+  .cli-card.estado-llamar::before { background: var(--yellow); }
+  .cli-card.estado-visita::before { background: #f5802a; }
+  .cli-card.estado-banco::before { background: var(--accent2); }
+  .cli-card.estado-promesa::before { background: var(--green); }
+  .cli-card.estado-descartado::before { background: var(--muted); }
+
+  .cli-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .cli-nombre {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .cli-fecha {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  .estado-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+  .badge-nuevo    { background: rgba(79,142,247,0.15); color: var(--accent); }
+  .badge-llamar   { background: rgba(245,166,35,0.15); color: var(--yellow); }
+  .badge-visita   { background: rgba(245,128,42,0.15); color: #f5802a; }
+  .badge-banco    { background: rgba(124,92,252,0.15); color: var(--accent2); }
+  .badge-promesa  { background: rgba(46,204,138,0.15); color: var(--green); }
+  .badge-descartado { background: rgba(107,112,148,0.15); color: var(--muted); }
+
+  .cli-tel {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .cli-casa {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .cli-obs {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .cli-financiero {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .cli-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-cli-wsp {
+    flex: 1;
+    padding: 9px;
+    background: #1a3b26;
+    border: 1px solid #2d6b43;
+    border-radius: 10px;
+    color: #4cd97b;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+  }
+  .btn-cli-edit {
+    flex: 1;
+    padding: 9px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+  }
+  .btn-cli-del {
+    padding: 9px 14px;
+    background: transparent;
+    border: 1px solid rgba(232,93,93,0.3);
+    border-radius: 10px;
+    color: var(--red);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* MODAL CLIENTE */
+  .modal-cli-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 300;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-cli-overlay.open { display: flex; }
+  .modal-cli {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px 40px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 92vh;
+    overflow-y: auto;
+    animation: slideUp 0.25s ease;
+  }
+
+  /* GUARDAR CLIENTE BTN en cotizador */
+  .btn-guardar-cli {
+    width: 100%;
+    padding: 13px;
+    background: var(--surface2);
+    border: 1px solid var(--accent2);
+    border-radius: 12px;
+    color: var(--accent2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    margin-bottom: 10px;
+    transition: all 0.18s;
+  }
+  .btn-guardar-cli.show { display: block; }
+
+  .cli-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--muted);
+  }
+  .cli-empty .icon { font-size: 40px; margin-bottom: 12px; }
+  .cli-empty p { font-size: 13px; line-height: 1.6; }</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">Valle <span>Cóndores</span></div>
+    <div class="uf-header" onclick="activarEditUF()" id="uf-header-wrap">
+      <span class="uf-header-label">UF</span>
+      <span class="uf-header-val" id="uf-display">—</span>
+      <span class="uf-header-edit">✏️</span>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('casas')" id="tab-casas">
+      <span class="tab-icon">🏠</span>Casas
+    </button>
+    <button class="tab" onclick="showTab('cotizador')" id="tab-cotizador">
+      <span class="tab-icon">🧮</span>Cotizar
+    </button>
+    <button class="tab" onclick="showTab('clientes')" id="tab-clientes">
+      <span class="tab-icon">👥</span>Clientes
+    </button>
+  </div>
+</div>
+
+<!-- ==================== CASAS ==================== -->
+<div class="section active" id="sec-casas">
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="stat-num" id="stat-total">65</div>
+      <div class="stat-label">Disponibles</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-etapa1">—</div>
+      <div class="stat-label">Etapa 1</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-etapa2">—</div>
+      <div class="stat-label">Etapa 2</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFiltro('todos',this)">Todos</button>
+    <button class="filter-btn" onclick="setFiltro('1',this)">Etapa 1</button>
+    <button class="filter-btn" onclick="setFiltro('2',this)">Etapa 2</button>
+    <button class="filter-btn" onclick="setFiltro('B',this)">Modelo B</button>
+    <button class="filter-btn" onclick="setFiltro('C',this)">Modelo C</button>
+  </div>
+
+  <div class="sort-bar">
+    <span class="sort-label">Ordenar ↑</span>
+    <button class="sort-btn" id="sort-lista" onclick="setOrden('precio_lista')">Precio lista</button>
+    <button class="sort-btn" id="sort-desc" onclick="setOrden('precio_desc')">Con descuento</button>
+    <button class="sort-btn" id="sort-m2" onclick="setOrden('sup_total')">M² totales</button>
+  </div>
+
+  <div id="lista-casas"></div>
+</div>
+
+<!-- ==================== COTIZADOR RÁPIDO ==================== -->
+<div class="section" id="sec-cotizador">
+  <p class="section-title">Cotización rápida</p>
+
+  <div class="client-section">
+    <div class="client-section-title">📋 Datos del cliente</div>
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" id="cot-nombre" placeholder="Nombre cliente">
+    </div>
+    <div class="field">
+      <label>Teléfono (para WhatsApp)</label>
+      <input type="tel" id="cot-telefono" placeholder="569XXXXXXXX">
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Casa a cotizar</label>
+    <select id="cot-casa">
+      <option value="">— Selecciona una unidad —</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Usar precio</label>
+    <div class="precio-toggle" id="precio-toggle">
+      <button class="precio-opt active" id="opt-lista" onclick="setPrecio('lista')">
+        <span class="opt-uf" id="opt-lista-uf">—</span>Precio lista
+      </button>
+      <button class="precio-opt" id="opt-desc" onclick="setPrecio('desc')">
+        <span class="opt-uf" id="opt-desc-uf">—</span>Con descuento
+      </button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Valor UF hoy ($)</label>
+    <input type="number" id="cot-uf" placeholder="Ej: 38500" inputmode="numeric">
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>% de Pie</label>
+      <input type="number" id="cot-pie" placeholder="Ej: 20" min="0" max="100" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Años plazo</label>
+      <input type="number" id="cot-anos" placeholder="Ej: 25" min="1" max="30" inputmode="numeric">
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Tasa anual (%)</label>
+    <input type="number" id="cot-tasa" placeholder="Ej: 5.5" step="0.01" inputmode="decimal">
+  </div>
+
+  <div class="error-msg" id="error-cot"></div>
+  <button class="btn-primary" onclick="calcular()">Calcular dividendo →</button>
+
+  <div class="resultado" id="resultado">
+    <div class="resultado-title">📊 Simulación de crédito</div>
+    <table class="res-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>UF</th>
+          <th>Pesos</th>
+          <th>%</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Precio venta</td>
+          <td class="col-uf" id="res-precio-uf">—</td>
+          <td class="col-pesos" id="res-precio-pesos">—</td>
+          <td class="col-pct">—</td>
+        </tr>
+        <tr>
+          <td>Pie</td>
+          <td class="col-uf" id="res-pie-uf">—</td>
+          <td class="col-pesos" id="res-pie-pesos">—</td>
+          <td class="col-pct" id="res-pct-pie">—</td>
+        </tr>
+        <tr>
+          <td>Crédito</td>
+          <td class="col-uf" id="res-credito-uf">—</td>
+          <td class="col-pesos" id="res-financiar">—</td>
+          <td class="col-pct" id="res-pct-credito">—</td>
+        </tr>
+        <tr class="row-dividendo">
+          <td>Dividendo</td>
+          <td class="col-uf" id="res-div-uf">—</td>
+          <td class="col-pesos" id="res-div-pesos">—</td>
+          <td class="col-pct">—</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="divider"></div>
+    <div style="font-size:10px;color:var(--muted);text-align:center;line-height:1.6">
+      Valor UF referencial · No incluye seguros de desgravamen ni incendio<br>Simulación aproximada · Sujeta a evaluación bancaria
+    </div>
+  </div>
+
+  <button class="btn-wsp" id="btn-wsp" onclick="enviarWhatsapp()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="#4cd97b"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.85L.057 23.7a.5.5 0 0 0 .612.612l5.875-1.472A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.375l-.36-.214-3.733.934.995-3.633-.234-.374A9.818 9.818 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+    Enviar por WhatsApp
+  </button>
+  <button class="btn-guardar-cli" id="btn-guardar-cli" onclick="guardarDesdeCotizador()">💾 Guardar cliente</button>
+  <div class="post-wsp" id="post-wsp">
+    <button class="btn-nueva-cot" onclick="nuevaCotizacion()">🏠 Nueva cotización</button>
+    <button class="btn-nuevo-cli" onclick="nuevoCliente()">👤 Nuevo cliente</button>
+  </div>
+</div>
+
+<!-- ==================== CLIENTES ==================== -->
+<div class="section" id="sec-clientes">
+  <div class="cli-toolbar">
+    <input class="cli-search" id="cli-busqueda" placeholder="🔍 Buscar cliente..." oninput="renderClientes()">
+    <button class="btn-nuevo-cli-main" onclick="abrirFormCliente()">+ Nuevo</button>
+  </div>
+  <div id="lista-clientes"></div>
+</div>
+
+<!-- ==================== MODAL COTIZADOR DESDE LISTA ==================== -->
+<div class="modal-overlay" id="modal-overlay" onclick="cerrarModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-titulo">Cotizar Casa</div>
+    <div class="modal-subtitle" id="modal-subtitulo"></div>
+
+    <div class="client-section">
+      <div class="client-section-title">📋 Datos del cliente</div>
+      <div class="field">
+        <label>Nombre</label>
+        <input type="text" id="m-nombre" placeholder="Nombre cliente">
+      </div>
+      <div class="field">
+        <label>Teléfono (para WhatsApp)</label>
+        <input type="tel" id="m-telefono" placeholder="569XXXXXXXX">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Usar precio</label>
+      <div class="precio-toggle">
+        <button class="precio-opt active" id="m-opt-lista" onclick="setModalPrecio('lista')">
+          <span class="opt-uf" id="m-lista-uf">—</span>Precio lista
+        </button>
+        <button class="precio-opt" id="m-opt-desc" onclick="setModalPrecio('desc')">
+          <span class="opt-uf" id="m-desc-uf">—</span>Con descuento
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Valor UF hoy ($)</label>
+      <input type="number" id="m-uf" placeholder="Ej: 38500" inputmode="numeric">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>% de Pie</label>
+        <input type="number" id="m-pie" placeholder="Ej: 20" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>Años plazo</label>
+        <input type="number" id="m-anos" placeholder="Ej: 25" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tasa anual (%)</label>
+      <input type="number" id="m-tasa" placeholder="Ej: 5.5" step="0.01" inputmode="decimal">
+    </div>
+
+    <div class="error-msg" id="error-modal"></div>
+    <button class="btn-primary" onclick="calcularModal()">Calcular dividendo →</button>
+
+    <div class="resultado" id="m-resultado">
+      <div class="resultado-title">📊 Simulación de crédito</div>
+      <table class="res-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>UF</th>
+            <th>Pesos</th>
+            <th>%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Precio venta</td>
+            <td class="col-uf" id="m-res-precio-uf">—</td>
+            <td class="col-pesos" id="m-res-precio-pesos">—</td>
+            <td class="col-pct">—</td>
+          </tr>
+          <tr>
+            <td>Pie</td>
+            <td class="col-uf" id="m-res-pie-uf">—</td>
+            <td class="col-pesos" id="m-res-pie-pesos">—</td>
+            <td class="col-pct" id="m-res-pct-pie">—</td>
+          </tr>
+          <tr>
+            <td>Crédito</td>
+            <td class="col-uf" id="m-res-credito-uf">—</td>
+            <td class="col-pesos" id="m-res-financiar">—</td>
+            <td class="col-pct" id="m-res-pct-credito">—</td>
+          </tr>
+          <tr class="row-dividendo">
+            <td>Dividendo</td>
+            <td class="col-uf" id="m-res-div-uf">—</td>
+            <td class="col-pesos" id="m-res-div-pesos">—</td>
+            <td class="col-pct">—</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="divider"></div>
+      <div style="font-size:10px;color:var(--muted);text-align:center;line-height:1.6">
+        Valor UF referencial · No incluye seguros de desgravamen ni incendio<br>Simulación aproximada · Sujeta a evaluación bancaria
+      </div>
+    </div>
+
+    <button class="btn-wsp" id="m-btn-wsp" onclick="enviarModalWhatsapp()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#4cd97b"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.85L.057 23.7a.5.5 0 0 0 .612.612l5.875-1.472A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.375l-.36-.214-3.733.934.995-3.633-.234-.374A9.818 9.818 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+      Enviar por WhatsApp
+    </button>
+    <div class="post-wsp" id="m-post-wsp">
+      <button class="btn-nueva-cot" onclick="modalNuevaCotizacion()">🏠 Nueva cotización</button>
+      <button class="btn-nuevo-cli" onclick="modalNuevoCliente()">👤 Nuevo cliente</button>
+    </div>
+
+    <button class="btn-close" onclick="document.getElementById('modal-overlay').classList.remove('open')">Cerrar</button>
+  </div>
+</div>
+
+<!-- ==================== MODAL FORMULARIO CLIENTE ==================== -->
+<div class="modal-cli-overlay" id="modal-cli-overlay" onclick="cerrarModalCli(event)">
+  <div class="modal-cli">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-cli-titulo">Nuevo Cliente</div>
+    <div style="height:12px"></div>
+
+    <div class="field">
+      <label>Nombre *</label>
+      <input type="text" id="cli-nombre" placeholder="Nombre completo">
+    </div>
+    <div class="field">
+      <label>Teléfono *</label>
+      <input type="tel" id="cli-telefono" placeholder="569XXXXXXXX">
+    </div>
+    <div class="field">
+      <label>Casa cotizada</label>
+      <select id="cli-casa">
+        <option value="">— Sin casa asignada —</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Estado / Próxima acción</label>
+      <select id="cli-estado">
+        <option value="nuevo">Nuevo contacto</option>
+        <option value="llamar">Llamar / Rellamar</option>
+        <option value="visita">Agendar visita</option>
+        <option value="banco">En evaluación banco</option>
+        <option value="promesa">Promesa firmada</option>
+        <option value="descartado">Descartado / No avanza</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Observación</label>
+      <input type="text" id="cli-obs" placeholder="Notas rápidas...">
+    </div>
+
+    <div class="client-section" style="margin-top:14px">
+      <div class="client-section-title">💰 Datos financieros (opcional)</div>
+      <div class="field-row">
+        <div class="field">
+          <label>UF del día</label>
+          <input type="number" id="cli-uf" placeholder="38500" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>Tasa anual %</label>
+          <input type="number" id="cli-tasa" placeholder="5.5" step="0.01">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>% Pie</label>
+          <input type="number" id="cli-pie" placeholder="20">
+        </div>
+        <div class="field">
+          <label>Años plazo</label>
+          <input type="number" id="cli-anos" placeholder="25">
+        </div>
+      </div>
+    </div>
+
+    <div class="error-msg" id="error-cli"></div>
+    <button class="btn-primary" onclick="guardarDesdeFormulario()">💾 Guardar cliente</button>
+    <button class="btn-close" onclick="document.getElementById('modal-cli-overlay').classList.remove('open')">Cancelar</button>
+  </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const CASAS = [
+  {etapa:1,nro:3,modelo:"B",precio_lista:3815.22,precio_desc:3510.00,desc_pct_display:8.0,sup_util:73.91,sup_total:183.63},
+  {etapa:1,nro:4,modelo:"B",precio_lista:3723.91,precio_desc:3426.00,desc_pct_display:8.0,sup_util:73.91,sup_total:179.90},
+  {etapa:1,nro:5,modelo:"C",precio_lista:4543.47,precio_desc:4180.00,desc_pct_display:8.0,sup_util:85.66,sup_total:219.60},
+  {etapa:1,nro:6,modelo:"B",precio_lista:3723.91,precio_desc:3426.00,desc_pct_display:8.0,sup_util:73.91,sup_total:179.90},
+  {etapa:1,nro:7,modelo:"B",precio_lista:3723.91,precio_desc:3426.00,desc_pct_display:8.0,sup_util:73.91,sup_total:179.90},
+  {etapa:1,nro:9,modelo:"B",precio_lista:3723.91,precio_desc:3426.00,desc_pct_display:8.0,sup_util:73.91,sup_total:179.90},
+  {etapa:1,nro:27,modelo:"B",precio_lista:4003.27,precio_desc:3526.08,desc_pct_display:11.9,sup_util:73.91,sup_total:181.26},
+  {etapa:1,nro:30,modelo:"B",precio_lista:3944.33,precio_desc:3426.05,desc_pct_display:13.1,sup_util:73.91,sup_total:174.70},
+  {etapa:1,nro:32,modelo:"B",precio_lista:3615.22,precio_desc:3326.00,desc_pct_display:8.0,sup_util:73.91,sup_total:174.70},
+  {etapa:1,nro:33,modelo:"B",precio_lista:3950.60,precio_desc:3356.03,desc_pct_display:15.0,sup_util:73.91,sup_total:175.38},
+  {etapa:1,nro:143,modelo:"C",precio_lista:4545.45,precio_desc:4000.00,desc_pct_display:12.0,sup_util:85.66,sup_total:221.56},
+  {etapa:1,nro:145,modelo:"B",precio_lista:3855.16,precio_desc:3296.16,desc_pct_display:14.5,sup_util:73.91,sup_total:164.78},
+  {etapa:1,nro:147,modelo:"B",precio_lista:3936.86,precio_desc:3416.01,desc_pct_display:13.2,sup_util:73.91,sup_total:173.87},
+  {etapa:1,nro:148,modelo:"B",precio_lista:3880.38,precio_desc:3306.08,desc_pct_display:14.8,sup_util:73.91,sup_total:167.58},
+  {etapa:1,nro:154,modelo:"B",precio_lista:3893.16,precio_desc:3316.19,desc_pct_display:14.8,sup_util:73.91,sup_total:169.00},
+  {etapa:1,nro:155,modelo:"B",precio_lista:3828.65,precio_desc:3255.88,desc_pct_display:15.0,sup_util:73.91,sup_total:161.83},
+  {etapa:1,nro:158,modelo:"B",precio_lista:3350.00,precio_desc:3082.00,desc_pct_display:8.0,sup_util:73.91,sup_total:158.08},
+  {etapa:1,nro:159,modelo:"B",precio_lista:3584.25,precio_desc:3186.04,desc_pct_display:11.1,sup_util:73.91,sup_total:166.94},
+  {etapa:1,nro:160,modelo:"B",precio_lista:3832.61,precio_desc:3526.00,desc_pct_display:8.0,sup_util:73.91,sup_total:187.10},
+  {etapa:1,nro:163,modelo:"B",precio_lista:3756.52,precio_desc:3456.00,desc_pct_display:8.0,sup_util:73.91,sup_total:188.49},
+  {etapa:1,nro:164,modelo:"B",precio_lista:3723.91,precio_desc:3426.00,desc_pct_display:8.0,sup_util:73.91,sup_total:180.63},
+  {etapa:1,nro:166,modelo:"B",precio_lista:3669.56,precio_desc:3376.00,desc_pct_display:8.0,sup_util:73.91,sup_total:178.19},
+  {etapa:1,nro:168,modelo:"B",precio_lista:3571.74,precio_desc:3286.00,desc_pct_display:8.0,sup_util:73.91,sup_total:173.53},
+  {etapa:1,nro:170,modelo:"B",precio_lista:3820.00,precio_desc:3056.00,desc_pct_display:20.0,sup_util:73.91,sup_total:175.41},
+  {etapa:1,nro:177,modelo:"B",precio_lista:3484.78,precio_desc:3206.00,desc_pct_display:8.0,sup_util:73.91,sup_total:175.77},
+  {etapa:1,nro:178,modelo:"B",precio_lista:3560.87,precio_desc:3276.00,desc_pct_display:8.0,sup_util:73.91,sup_total:173.29},
+  {etapa:1,nro:179,modelo:"B",precio_lista:3539.13,precio_desc:3256.00,desc_pct_display:8.0,sup_util:73.91,sup_total:171.02},
+  {etapa:1,nro:182,modelo:"B",precio_lista:3582.61,precio_desc:3296.00,desc_pct_display:8.0,sup_util:73.91,sup_total:170.37},
+  {etapa:1,nro:183,modelo:"B",precio_lista:3560.87,precio_desc:3276.00,desc_pct_display:8.0,sup_util:73.91,sup_total:171.83},
+  {etapa:1,nro:184,modelo:"B",precio_lista:3598.91,precio_desc:3311.00,desc_pct_display:8.0,sup_util:73.91,sup_total:173.74},
+  {etapa:1,nro:190,modelo:"B",precio_lista:3876.09,precio_desc:3566.00,desc_pct_display:8.0,sup_util:73.91,sup_total:187.91},
+  {etapa:1,nro:196,modelo:"B",precio_lista:4006.52,precio_desc:3686.00,desc_pct_display:8.0,sup_util:73.91,sup_total:193.38},
+  {etapa:2,nro:108,modelo:"C",precio_lista:4565.22,precio_desc:4200.00,desc_pct_display:8.0,sup_util:85.66,sup_total:251.04},
+  {etapa:2,nro:109,modelo:"B",precio_lista:4326.67,precio_desc:3489.89,desc_pct_display:19.3,sup_util:73.91,sup_total:217.95},
+  {etapa:2,nro:110,modelo:"B",precio_lista:3972.43,precio_desc:3390.07,desc_pct_display:14.7,sup_util:73.91,sup_total:178.59},
+  {etapa:2,nro:111,modelo:"B",precio_lista:3972.43,precio_desc:3390.07,desc_pct_display:14.7,sup_util:73.91,sup_total:178.59},
+  {etapa:2,nro:112,modelo:"B",precio_lista:3972.43,precio_desc:3390.07,desc_pct_display:14.7,sup_util:73.91,sup_total:178.59},
+  {etapa:2,nro:113,modelo:"B",precio_lista:3972.43,precio_desc:3390.07,desc_pct_display:14.7,sup_util:73.91,sup_total:178.59},
+  {etapa:2,nro:114,modelo:"B",precio_lista:3684.78,precio_desc:3390.00,desc_pct_display:8.0,sup_util:73.91,sup_total:178.59},
+  {etapa:2,nro:115,modelo:"C",precio_lista:4543.48,precio_desc:4180.00,desc_pct_display:8.0,sup_util:85.66,sup_total:220.81},
+  {etapa:2,nro:116,modelo:"B",precio_lista:3966.67,precio_desc:3570.00,desc_pct_display:10.0,sup_util:73.91,sup_total:182.40},
+  {etapa:2,nro:117,modelo:"C",precio_lista:4608.70,precio_desc:4240.00,desc_pct_display:8.0,sup_util:85.66,sup_total:219.60},
+  {etapa:2,nro:118,modelo:"C",precio_lista:4608.70,precio_desc:4240.00,desc_pct_display:8.0,sup_util:85.66,sup_total:219.60},
+  {etapa:2,nro:119,modelo:"C",precio_lista:4608.70,precio_desc:4240.00,desc_pct_display:8.0,sup_util:85.66,sup_total:219.60},
+  {etapa:2,nro:120,modelo:"C",precio_lista:5187.50,precio_desc:4360.09,desc_pct_display:16.0,sup_util:85.66,sup_total:271.82},
+  {etapa:2,nro:121,modelo:"B",precio_lista:3858.70,precio_desc:3550.00,desc_pct_display:8.0,sup_util:73.91,sup_total:177.78},
+  {etapa:2,nro:122,modelo:"B",precio_lista:3804.35,precio_desc:3500.00,desc_pct_display:8.0,sup_util:73.91,sup_total:168.82},
+  {etapa:2,nro:124,modelo:"C",precio_lista:5612.50,precio_desc:4490.00,desc_pct_display:20.0,sup_util:85.66,sup_total:364.94},
+  {etapa:2,nro:126,modelo:"C",precio_lista:4785.11,precio_desc:4270.23,desc_pct_display:10.8,sup_util:85.66,sup_total:227.11},
+  {etapa:2,nro:127,modelo:"B",precio_lista:3804.35,precio_desc:3500.00,desc_pct_display:8.0,sup_util:73.91,sup_total:169.08},
+  {etapa:2,nro:128,modelo:"B",precio_lista:3809.78,precio_desc:3505.00,desc_pct_display:8.0,sup_util:73.91,sup_total:169.97},
+  {etapa:2,nro:129,modelo:"C",precio_lista:4500.00,precio_desc:4140.00,desc_pct_display:8.0,sup_util:85.66,sup_total:212.57},
+  {etapa:2,nro:130,modelo:"C",precio_lista:4510.87,precio_desc:4150.00,desc_pct_display:8.0,sup_util:85.66,sup_total:216.25},
+  {etapa:2,nro:131,modelo:"C",precio_lista:4516.30,precio_desc:4155.00,desc_pct_display:8.0,sup_util:85.66,sup_total:216.45},
+  {etapa:2,nro:132,modelo:"C",precio_lista:4521.74,precio_desc:4160.00,desc_pct_display:8.0,sup_util:85.66,sup_total:217.92},
+  {etapa:2,nro:133,modelo:"C",precio_lista:4532.61,precio_desc:4170.00,desc_pct_display:8.0,sup_util:85.66,sup_total:218.88},
+  {etapa:2,nro:134,modelo:"C",precio_lista:4510.87,precio_desc:4150.00,desc_pct_display:8.0,sup_util:85.66,sup_total:218.22},
+  {etapa:2,nro:135,modelo:"B",precio_lista:3978.01,precio_desc:3289.81,desc_pct_display:17.3,sup_util:73.91,sup_total:179.21},
+  {etapa:2,nro:136,modelo:"B",precio_lista:3847.83,precio_desc:3540.00,desc_pct_display:8.0,sup_util:73.91,sup_total:195.40},
+  {etapa:2,nro:137,modelo:"C",precio_lista:4516.30,precio_desc:4155.00,desc_pct_display:8.0,sup_util:85.66,sup_total:216.64},
+  {etapa:2,nro:138,modelo:"C",precio_lista:4510.87,precio_desc:4150.00,desc_pct_display:8.0,sup_util:85.66,sup_total:216.10},
+  {etapa:2,nro:139,modelo:"C",precio_lista:4694.66,precio_desc:4159.94,desc_pct_display:11.4,sup_util:85.66,sup_total:217.06},
+  {etapa:2,nro:140,modelo:"C",precio_lista:4527.17,precio_desc:4165.00,desc_pct_display:8.0,sup_util:85.66,sup_total:218.20},
+  {etapa:2,nro:141,modelo:"C",precio_lista:4548.91,precio_desc:4185.00,desc_pct_display:8.0,sup_util:85.66,sup_total:219.37},
+  {etapa:2,nro:142,modelo:"B",precio_lista:3902.17,precio_desc:3590.00,desc_pct_display:8.0,sup_util:73.91,sup_total:201.67}
+];
+
+// ==================== STATE ====================
+let filtroActual = 'todos';
+let ordenActual = null;
+let casaModalActual = null;
+let precioSeleccionado = 'lista';
+let precioModalSeleccionado = 'lista';
+let ultimaCotizacion = null;
+let ultimaCotizacionModal = null;
+let ufGlobal = null;
+
+// ESTADO CLIENTES
+let clientes = [];
+let clienteEditandoId = null;
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', () => {
+  actualizarStats();
+  renderCasas();
+  poblarSelectCasas();
+  poblarSelectCliCasa();
+  actualizarDisplayUF();
+  cargarClientes();
+  renderClientes();
+});
+
+// ==================== UF GLOBAL ====================
+function actualizarDisplayUF() {
+  const display = document.getElementById('uf-display');
+  if (ufGlobal) {
+    display.textContent = '$' + Math.round(ufGlobal).toLocaleString('es-CL');
+  } else {
+    display.textContent = 'Ingresar';
+  }
+}
+
+function activarEditUF() {
+  const wrap = document.getElementById('uf-header-wrap');
+  const valActual = ufGlobal || '';
+  wrap.innerHTML = '<span class="uf-header-label">UF $</span>'
+    + '<input id="uf-inline-input" type="number" placeholder="38500" value="' + valActual + '" inputmode="numeric" onclick="event.stopPropagation()">'
+    + '<button onclick="guardarUF(event)" style="background:var(--accent);border:none;border-radius:5px;color:#fff;font-size:11px;font-weight:600;padding:3px 8px;cursor:pointer;font-family:DM Sans,sans-serif">OK</button>';
+  setTimeout(() => {
+    const inp = document.getElementById('uf-inline-input');
+    if (inp) { inp.focus(); inp.select(); }
+  }, 50);
+}
+
+function guardarUF(e) {
+  e.stopPropagation();
+  const inp = document.getElementById('uf-inline-input');
+  const val = parseFloat(inp ? inp.value : 0);
+  if (val > 0) {
+    ufGlobal = val;
+    // Sincronizar con campo UF del cotizador si está vacío
+    const cotUF = document.getElementById('cot-uf');
+    if (cotUF) cotUF.value = val;
+  }
+  // Restaurar display
+  const wrap = document.getElementById('uf-header-wrap');
+  wrap.innerHTML = '<span class="uf-header-label">UF</span>'
+    + '<span class="uf-header-val" id="uf-display">—</span>'
+    + '<span class="uf-header-edit">✏️</span>';
+  wrap.onclick = activarEditUF;
+  actualizarDisplayUF();
+}
+
+// ==================== FLUJO POST-WHATSAPP ====================
+function nuevaCotizacion() {
+  // Guarda nombre, tel, UF, tasa, pie, años — borra casa y resultado
+  // Cierra modal si estaba abierto, lleva al tab casas
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('resultado').classList.remove('show');
+  document.getElementById('btn-wsp').classList.remove('show');
+  document.getElementById('btn-guardar-cli').classList.remove('show');
+  document.getElementById('post-wsp').classList.remove('show');
+  document.getElementById('error-cot').classList.remove('show');
+  document.getElementById('cot-casa').value = '';
+  document.getElementById('opt-lista-uf').textContent = '—';
+  document.getElementById('opt-desc-uf').textContent = '—';
+  precioSeleccionado = 'lista';
+  document.getElementById('opt-lista').classList.add('active');
+  document.getElementById('opt-desc').classList.remove('active');
+  showTab('casas');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nuevoCliente() {
+  // Mantiene solo UF, borra todo lo demás
+  const uf = ufGlobal || '';
+  document.getElementById('cot-nombre').value = '';
+  document.getElementById('cot-telefono').value = '';
+  document.getElementById('cot-casa').value = '';
+  document.getElementById('cot-pie').value = '';
+  document.getElementById('cot-anos').value = '';
+  document.getElementById('cot-tasa').value = '';
+  document.getElementById('cot-uf').value = uf;
+  document.getElementById('opt-lista-uf').textContent = '—';
+  document.getElementById('opt-desc-uf').textContent = '—';
+  precioSeleccionado = 'lista';
+  document.getElementById('opt-lista').classList.add('active');
+  document.getElementById('opt-desc').classList.remove('active');
+  document.getElementById('resultado').classList.remove('show');
+  document.getElementById('btn-wsp').classList.remove('show');
+  document.getElementById('post-wsp').classList.remove('show');
+  document.getElementById('error-cot').classList.remove('show');
+  showTab('cotizador');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function modalNuevaCotizacion() {
+  // Guarda nombre y tel del modal para el flujo siguiente, cierra modal, va a casas
+  const nombre = document.getElementById('m-nombre').value;
+  const tel = document.getElementById('m-telefono').value;
+  const pie = document.getElementById('m-pie').value;
+  const anos = document.getElementById('m-anos').value;
+  const tasa = document.getElementById('m-tasa').value;
+  // Pre-cargar datos en tab cotizador para que estén disponibles
+  if (nombre) document.getElementById('cot-nombre').value = nombre;
+  if (tel) document.getElementById('cot-telefono').value = tel;
+  if (pie) document.getElementById('cot-pie').value = pie;
+  if (anos) document.getElementById('cot-anos').value = anos;
+  if (tasa) document.getElementById('cot-tasa').value = tasa;
+  if (ufGlobal) document.getElementById('cot-uf').value = ufGlobal;
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('resultado').classList.remove('show');
+  document.getElementById('btn-wsp').classList.remove('show');
+  document.getElementById('post-wsp').classList.remove('show');
+  showTab('casas');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function modalNuevoCliente() {
+  // Borra todo en modal excepto UF, cierra modal
+  document.getElementById('m-nombre').value = '';
+  document.getElementById('m-telefono').value = '';
+  document.getElementById('m-pie').value = '';
+  document.getElementById('m-anos').value = '';
+  document.getElementById('m-tasa').value = '';
+  if (ufGlobal) document.getElementById('m-uf').value = ufGlobal;
+  document.getElementById('m-resultado').classList.remove('show');
+  document.getElementById('m-btn-wsp').classList.remove('show');
+  document.getElementById('m-post-wsp').classList.remove('show');
+  document.getElementById('modal-overlay').classList.remove('open');
+  showTab('casas');
+}
+
+function actualizarStats() {
+  const e1 = CASAS.filter(c => c.etapa === 1).length;
+  const e2 = CASAS.filter(c => c.etapa === 2).length;
+  document.getElementById('stat-total').textContent = CASAS.length;
+  document.getElementById('stat-etapa1').textContent = e1;
+  document.getElementById('stat-etapa2').textContent = e2;
+}
+
+// ==================== TAB NAVIGATION ====================
+function showTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ==================== FILTER ====================
+function setFiltro(val, btn) {
+  filtroActual = val;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCasas();
+}
+
+// ==================== ORDEN ====================
+function setOrden(campo) {
+  ordenActual = ordenActual === campo ? null : campo;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  if (ordenActual) {
+    const ids = { precio_lista: 'sort-lista', precio_desc: 'sort-desc', sup_total: 'sort-m2' };
+    document.getElementById(ids[ordenActual]).classList.add('active');
+  }
+  renderCasas();
+}
+
+function casasFiltradas() {
+  const filtradas = CASAS.filter(c => {
+    if (filtroActual === 'todos') return true;
+    if (filtroActual === '1') return c.etapa === 1;
+    if (filtroActual === '2') return c.etapa === 2;
+    if (filtroActual === 'B') return c.modelo === 'B';
+    if (filtroActual === 'C') return c.modelo === 'C';
+    return true;
+  });
+  if (ordenActual) {
+    filtradas.sort((a, b) => a[ordenActual] - b[ordenActual]);
+  }
+  return filtradas;
+}
+
+// ==================== RENDER CASAS ====================
+function renderCasas() {
+  const lista = document.getElementById('lista-casas');
+  const casas = casasFiltradas();
+  if (!casas.length) {
+    lista.innerHTML = '<div class="empty-state">No hay casas con ese filtro</div>';
+    return;
+  }
+  lista.innerHTML = casas.map(c => `
+    <div class="casa-card">
+      <div class="casa-header">
+        <div>
+          <span class="modelo-tag modelo-${c.modelo}">Modelo ${c.modelo}</span>
+          <span class="casa-nro">Casa N° ${c.nro}</span>
+        </div>
+        <span class="casa-etapa etapa-${c.etapa}">Etapa ${c.etapa}</span>
+      </div>
+      <div class="casa-precios">
+        <span class="precio-lista">${c.precio_lista.toFixed(2)} UF</span>
+        <span class="precio-desc">▼ ${c.precio_desc.toFixed(2)} UF</span>
+        <span class="desc-badge">-${c.desc_pct_display}%</span>
+      </div>
+      <div class="casa-meta">
+        <span>📐 ${c.sup_util} m² útil</span>
+        <span>🏡 ${c.sup_total} m² total</span>
+      </div>
+      <button class="cotizar-btn" onclick="abrirModal(${c.nro})">Cotizar esta casa →</button>
+    </div>
+  `).join('');
+}
+
+// ==================== MODAL ====================
+function abrirModal(nro) {
+  casaModalActual = CASAS.find(c => c.nro === nro);
+  if (!casaModalActual) return;
+  const c = casaModalActual;
+  document.getElementById('modal-titulo').textContent = 'Cotizar Casa N° ' + c.nro;
+  document.getElementById('modal-subtitulo').textContent =
+    'Etapa ' + c.etapa + ' · Modelo ' + c.modelo + ' · ' + c.sup_util + ' m² útil · ' + c.sup_total + ' m² total';
+  document.getElementById('m-lista-uf').textContent = c.precio_lista.toFixed(2) + ' UF';
+  document.getElementById('m-desc-uf').textContent = c.precio_desc.toFixed(2) + ' UF';
+  precioModalSeleccionado = 'lista';
+  document.getElementById('m-opt-lista').classList.add('active');
+  document.getElementById('m-opt-desc').classList.remove('active');
+  document.getElementById('m-resultado').classList.remove('show');
+  document.getElementById('m-btn-wsp').classList.remove('show');
+  document.getElementById('m-post-wsp').classList.remove('show');
+  // Sincronizar UF global al modal
+  if (ufGlobal) document.getElementById('m-uf').value = ufGlobal;
+  // Sincronizar datos cliente si vienen del tab cotizador
+  const nombre = document.getElementById('cot-nombre').value;
+  const tel = document.getElementById('cot-telefono').value;
+  const pie = document.getElementById('cot-pie').value;
+  const anos = document.getElementById('cot-anos').value;
+  const tasa = document.getElementById('cot-tasa').value;
+  if (nombre) document.getElementById('m-nombre').value = nombre;
+  if (tel) document.getElementById('m-telefono').value = tel;
+  if (pie) document.getElementById('m-pie').value = pie;
+  if (anos) document.getElementById('m-anos').value = anos;
+  if (tasa) document.getElementById('m-tasa').value = tasa;
+  ultimaCotizacionModal = null;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function cerrarModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+
+function setModalPrecio(tipo) {
+  precioModalSeleccionado = tipo;
+  document.getElementById('m-opt-lista').classList.toggle('active', tipo === 'lista');
+  document.getElementById('m-opt-desc').classList.toggle('active', tipo === 'desc');
+}
+
+// ==================== POBLAR SELECT CASAS (TAB COTIZADOR) ====================
+function poblarSelectCasas() {
+  const sel = document.getElementById('cot-casa');
+  sel.innerHTML = '<option value="">— Selecciona una unidad —</option>';
+  CASAS.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.nro;
+    opt.textContent = `Casa ${c.nro} | E${c.etapa} Mod.${c.modelo} | ${c.precio_lista.toFixed(0)} UF`;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', () => {
+    const c = CASAS.find(x => x.nro == sel.value);
+    if (c) {
+      document.getElementById('opt-lista-uf').textContent = c.precio_lista.toFixed(2) + ' UF';
+      document.getElementById('opt-desc-uf').textContent = c.precio_desc.toFixed(2) + ' UF';
+    }
+  });
+}
+
+function setPrecio(tipo) {
+  precioSeleccionado = tipo;
+  document.getElementById('opt-lista').classList.toggle('active', tipo === 'lista');
+  document.getElementById('opt-desc').classList.toggle('active', tipo === 'desc');
+}
+
+// ==================== CÁLCULO (fórmula cuota francesa) ====================
+function calcDividendo(precioUF, piePct, anos, tasaAnual, valorUF) {
+  const monto = precioUF * (1 - piePct / 100);
+  const n = anos * 12;
+  const r = tasaAnual / 100 / 12;
+  const divUF = r === 0
+    ? monto / n
+    : monto * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  const divPesos = divUF * valorUF;
+  const pieUF = precioUF * (piePct / 100);
+  const piePesos = pieUF * valorUF;
+  return {
+    precioUF, precioPesos: precioUF * valorUF,
+    pieUF, piePesos,
+    financiarUF: monto, financiarPesos: monto * valorUF,
+    divUF, divPesos
+  };
+}
+
+function fmt(n) { return Math.round(n).toLocaleString('es-CL'); }
+function fmtUF(n) { return n.toFixed(2) + ' UF'; }
+
+// ==================== CALCULAR (tab cotizador) ====================
+function mostrarError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function limpiarError(id) {
+  const el = document.getElementById(id);
+  el.textContent = '';
+  el.classList.remove('show');
+}
+
+function calcular() {
+  limpiarError('error-cot');
+  const nro = document.getElementById('cot-casa').value;
+  const c = CASAS.find(x => x.nro == nro);
+  if (!c) { mostrarError('error-cot', '⚠️ Selecciona una casa primero'); return; }
+  const uf = parseFloat(document.getElementById('cot-uf').value);
+  const pie = parseFloat(document.getElementById('cot-pie').value);
+  const anos = parseFloat(document.getElementById('cot-anos').value);
+  const tasa = parseFloat(document.getElementById('cot-tasa').value);
+  if (!uf || isNaN(uf)) { mostrarError('error-cot', '⚠️ Ingresa el valor de la UF'); return; }
+  if (!pie || isNaN(pie)) { mostrarError('error-cot', '⚠️ Ingresa el % de pie'); return; }
+  if (!anos || isNaN(anos)) { mostrarError('error-cot', '⚠️ Ingresa los años de plazo'); return; }
+  if (!tasa || isNaN(tasa)) { mostrarError('error-cot', '⚠️ Ingresa la tasa de interés'); return; }
+
+  const precio = precioSeleccionado === 'lista' ? c.precio_lista : c.precio_desc;
+  const r = calcDividendo(precio, pie, anos, tasa, uf);
+  ultimaCotizacion = { r, c, nombre: document.getElementById('cot-nombre').value, telefono: document.getElementById('cot-telefono').value };
+  // Guardar UF ingresada como global del día
+  ufGlobal = uf;
+  actualizarDisplayUF();
+  // Ocultar botones post-wsp si se recalcula
+  document.getElementById('post-wsp').classList.remove('show');
+
+  document.getElementById('res-precio-uf').textContent = fmtUF(r.precioUF);
+  document.getElementById('res-precio-pesos').textContent = '$' + fmt(r.precioPesos);
+  document.getElementById('res-pie-uf').textContent = fmtUF(r.pieUF);
+  document.getElementById('res-pie-pesos').textContent = '$' + fmt(r.piePesos);
+  document.getElementById('res-pct-pie').textContent = pie + '%';
+  document.getElementById('res-credito-uf').textContent = fmtUF(r.financiarUF);
+  document.getElementById('res-financiar').textContent = '$' + fmt(r.financiarPesos);
+  document.getElementById('res-pct-credito').textContent = (100 - pie) + '%';
+  document.getElementById('res-div-uf').textContent = fmtUF(r.divUF);
+  document.getElementById('res-div-pesos').textContent = '$' + fmt(r.divPesos);
+
+  document.getElementById('resultado').classList.add('show');
+  document.getElementById('btn-wsp').classList.add('show');
+  document.getElementById('btn-guardar-cli').classList.add('show');
+  document.getElementById('resultado').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ==================== CALCULAR (modal) ====================
+function calcularModal() {
+  limpiarError('error-modal');
+  const c = casaModalActual;
+  if (!c) return;
+  const uf = parseFloat(document.getElementById('m-uf').value);
+  const pie = parseFloat(document.getElementById('m-pie').value);
+  const anos = parseFloat(document.getElementById('m-anos').value);
+  const tasa = parseFloat(document.getElementById('m-tasa').value);
+  if (!uf || isNaN(uf)) { mostrarError('error-modal', '⚠️ Ingresa el valor de la UF'); return; }
+  if (!pie || isNaN(pie)) { mostrarError('error-modal', '⚠️ Ingresa el % de pie'); return; }
+  if (!anos || isNaN(anos)) { mostrarError('error-modal', '⚠️ Ingresa los años de plazo'); return; }
+  if (!tasa || isNaN(tasa)) { mostrarError('error-modal', '⚠️ Ingresa la tasa de interés'); return; }
+
+  const precio = precioModalSeleccionado === 'lista' ? c.precio_lista : c.precio_desc;
+  const r = calcDividendo(precio, pie, anos, tasa, uf);
+  ultimaCotizacionModal = { r, c, nombre: document.getElementById('m-nombre').value, telefono: document.getElementById('m-telefono').value };
+
+  document.getElementById('m-res-precio-uf').textContent = fmtUF(r.precioUF);
+  document.getElementById('m-res-precio-pesos').textContent = '$' + fmt(r.precioPesos);
+  document.getElementById('m-res-pie-uf').textContent = fmtUF(r.pieUF);
+  document.getElementById('m-res-pie-pesos').textContent = '$' + fmt(r.piePesos);
+  document.getElementById('m-res-pct-pie').textContent = pie + '%';
+  document.getElementById('m-res-credito-uf').textContent = fmtUF(r.financiarUF);
+  document.getElementById('m-res-financiar').textContent = '$' + fmt(r.financiarPesos);
+  document.getElementById('m-res-pct-credito').textContent = (100 - pie) + '%';
+  document.getElementById('m-res-div-uf').textContent = fmtUF(r.divUF);
+  document.getElementById('m-res-div-pesos').textContent = '$' + fmt(r.divPesos);
+
+  document.getElementById('m-resultado').classList.add('show');
+  document.getElementById('m-btn-wsp').classList.add('show');
+}
+
+// ==================== WHATSAPP ====================
+function buildMensajeWspClean(data) {
+  const { r, c, nombre } = data;
+  const nombreStr = nombre ? nombre : 'Cliente';
+  const piePct = Math.round((r.pieUF / r.precioUF) * 100);
+
+  const msg = 'Hola ' + nombreStr + ', esta es tu simulacion para Casa N°' + c.nro
+    + ' - Mod.' + c.modelo
+    + ' - ' + c.sup_util + ' m2 util'
+    + ' - ' + c.sup_total + ' m2 total\n\n'
+    + '> Precio lista: ' + c.precio_lista.toFixed(2) + ' UF\n'
+    + '> Precio con descuento: ' + c.precio_desc.toFixed(2) + ' UF (-' + c.desc_pct_display + '%)\n'
+    + '> Precio cotizado: ' + fmtUF(r.precioUF) + '\n\n'
+    + '> Pie (' + piePct + '%): $' + fmt(r.piePesos) + '\n'
+    + '> Monto a financiar: $' + fmt(r.financiarPesos) + '\n\n'
+    + '* Dividendo mensual: $' + fmt(r.divPesos) + '\n'
+    + '* Equivalente en UF: ' + fmtUF(r.divUF) + '\n\n'
+    + 'Simulacion referencial, sujeta a evaluacion bancaria.\n'
+    + 'Precios sujetos a modificacion.';
+
+  return encodeURIComponent(msg);
+}
+
+function enviarWhatsapp() {
+  if (!ultimaCotizacion) return;
+  const tel = ultimaCotizacion.telefono.replace(/\D/g,'');
+  const msg = buildMensajeWspClean(ultimaCotizacion);
+  window.open('https://wa.me/' + tel + '?text=' + msg, '_blank');
+  document.getElementById('post-wsp').classList.add('show');
+}
+
+function enviarModalWhatsapp() {
+  if (!ultimaCotizacionModal) return;
+  const tel = ultimaCotizacionModal.telefono.replace(/\D/g,'');
+  const msg = buildMensajeWspClean(ultimaCotizacionModal);
+  window.open('https://wa.me/' + tel + '?text=' + msg, '_blank');
+  document.getElementById('m-post-wsp').classList.add('show');
+}
+
+// ==================== CLIENTES — PERSISTENCIA ====================
+function cargarClientes() {
+  try {
+    const data = localStorage.getItem('vc_clientes');
+    clientes = data ? JSON.parse(data) : [];
+  } catch(e) { clientes = []; }
+}
+
+function guardarClientes() {
+  try { localStorage.setItem('vc_clientes', JSON.stringify(clientes)); } catch(e) {}
+}
+
+// ==================== CLIENTES — ESTADO HELPERS ====================
+const ESTADOS = {
+  nuevo:      { label: 'Nuevo contacto',       badge: 'badge-nuevo',     card: 'estado-nuevo' },
+  llamar:     { label: 'Llamar / Rellamar',    badge: 'badge-llamar',    card: 'estado-llamar' },
+  visita:     { label: 'Agendar visita',        badge: 'badge-visita',    card: 'estado-visita' },
+  banco:      { label: 'En evaluación banco',  badge: 'badge-banco',     card: 'estado-banco' },
+  promesa:    { label: 'Promesa firmada',       badge: 'badge-promesa',   card: 'estado-promesa' },
+  descartado: { label: 'Descartado',            badge: 'badge-descartado',card: 'estado-descartado' }
+};
+
+function nombreEstado(key) { return ESTADOS[key] ? ESTADOS[key].label : key; }
+function badgeEstado(key)  { return ESTADOS[key] ? ESTADOS[key].badge : 'badge-nuevo'; }
+function cardEstado(key)   { return ESTADOS[key] ? ESTADOS[key].card  : 'estado-nuevo'; }
+
+// ==================== CLIENTES — RENDER ====================
+function renderClientes() {
+  const lista = document.getElementById('lista-clientes');
+  const busq = (document.getElementById('cli-busqueda').value || '').toLowerCase().trim();
+  const filtrados = clientes.filter(c =>
+    c.nombre.toLowerCase().includes(busq) ||
+    (c.telefono && c.telefono.includes(busq))
+  );
+
+  if (!filtrados.length) {
+    lista.innerHTML = '<div class="cli-empty"><div class="icon">👥</div>'
+      + '<p>' + (clientes.length === 0
+        ? 'Aún no hay clientes registrados.<br>Toca <strong>+ Nuevo</strong> para agregar el primero.'
+        : 'No se encontraron clientes con esa búsqueda.')
+      + '</p></div>';
+    return;
+  }
+
+  lista.innerHTML = filtrados.map(c => {
+    const casa = c.casa_nro ? CASAS.find(x => x.nro == c.casa_nro) : null;
+    const casaStr = casa
+      ? 'Casa N°' + casa.nro + ' · Mod.' + casa.modelo + ' · ' + casa.precio_lista.toFixed(0) + ' UF'
+      : '';
+    const finStr = (c.uf || c.tasa || c.pie || c.anos)
+      ? [c.uf ? 'UF $' + Math.round(c.uf).toLocaleString('es-CL') : '',
+         c.tasa ? 'Tasa ' + c.tasa + '%' : '',
+         c.pie ? 'Pie ' + c.pie + '%' : '',
+         c.anos ? c.anos + ' años' : ''].filter(Boolean).join(' · ')
+      : '';
+
+    return '<div class="cli-card ' + cardEstado(c.estado) + '">'
+      + '<div class="cli-header">'
+      + '<div class="cli-nombre">' + c.nombre + '</div>'
+      + '<div class="cli-fecha">' + c.fecha + '<br>' + c.hora + '</div>'
+      + '</div>'
+      + '<span class="estado-badge ' + badgeEstado(c.estado) + '">' + nombreEstado(c.estado) + '</span>'
+      + (c.telefono ? '<div class="cli-tel">📞 ' + c.telefono + '</div>' : '')
+      + (casaStr ? '<div class="cli-casa">🏠 ' + casaStr + '</div>' : '')
+      + (c.obs ? '<div class="cli-obs">"' + c.obs + '"</div>' : '')
+      + (finStr ? '<div class="cli-financiero">' + finStr + '</div>' : '')
+      + '<div class="cli-actions">'
+      + (c.telefono
+        ? '<button class="btn-cli-wsp" onclick="wspCliente(' + c.id + ')">WhatsApp</button>'
+        : '')
+      + '<button class="btn-cli-edit" onclick="abrirFormCliente(' + c.id + ')">✏️ Editar</button>'
+      + '<button class="btn-cli-del" onclick="eliminarCliente(' + c.id + ')">🗑</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ==================== CLIENTES — FORMULARIO ====================
+function poblarSelectCliCasa() {
+  const sel = document.getElementById('cli-casa');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Sin casa asignada —</option>';
+  CASAS.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.nro;
+    opt.textContent = 'Casa ' + c.nro + ' | E' + c.etapa + ' Mod.' + c.modelo + ' | ' + c.precio_lista.toFixed(0) + ' UF';
+    sel.appendChild(opt);
+  });
+}
+
+function abrirFormCliente(id) {
+  clienteEditandoId = id || null;
+  limpiarError('error-cli');
+
+  if (id) {
+    const c = clientes.find(x => x.id === id);
+    if (!c) return;
+    document.getElementById('modal-cli-titulo').textContent = 'Editar Cliente';
+    document.getElementById('cli-nombre').value   = c.nombre || '';
+    document.getElementById('cli-telefono').value = c.telefono || '';
+    document.getElementById('cli-casa').value     = c.casa_nro || '';
+    document.getElementById('cli-estado').value   = c.estado || 'nuevo';
+    document.getElementById('cli-obs').value      = c.obs || '';
+    document.getElementById('cli-uf').value       = c.uf || '';
+    document.getElementById('cli-tasa').value     = c.tasa || '';
+    document.getElementById('cli-pie').value      = c.pie || '';
+    document.getElementById('cli-anos').value     = c.anos || '';
+  } else {
+    document.getElementById('modal-cli-titulo').textContent = 'Nuevo Cliente';
+    document.getElementById('cli-nombre').value   = '';
+    document.getElementById('cli-telefono').value = '';
+    document.getElementById('cli-casa').value     = '';
+    document.getElementById('cli-estado').value   = 'nuevo';
+    document.getElementById('cli-obs').value      = '';
+    document.getElementById('cli-uf').value       = ufGlobal || '';
+    document.getElementById('cli-tasa').value     = '';
+    document.getElementById('cli-pie').value      = '';
+    document.getElementById('cli-anos').value     = '';
+  }
+  document.getElementById('modal-cli-overlay').classList.add('open');
+}
+
+function cerrarModalCli(e) {
+  if (e.target === document.getElementById('modal-cli-overlay')) {
+    document.getElementById('modal-cli-overlay').classList.remove('open');
+  }
+}
+
+function guardarDesdeFormulario() {
+  limpiarError('error-cli');
+  const nombre = document.getElementById('cli-nombre').value.trim();
+  const tel    = document.getElementById('cli-telefono').value.trim();
+  if (!nombre) { mostrarError('error-cli', '⚠️ Ingresa el nombre del cliente'); return; }
+  if (!tel)    { mostrarError('error-cli', '⚠️ Ingresa el teléfono'); return; }
+
+  const ahora = new Date();
+  const fecha = ahora.toLocaleDateString('es-CL', { day:'2-digit', month:'2-digit', year:'numeric' });
+  const hora  = ahora.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
+
+  if (clienteEditandoId) {
+    const idx = clientes.findIndex(x => x.id === clienteEditandoId);
+    if (idx !== -1) {
+      clientes[idx] = Object.assign(clientes[idx], {
+        nombre,
+        telefono: tel,
+        casa_nro: document.getElementById('cli-casa').value || null,
+        estado:   document.getElementById('cli-estado').value,
+        obs:      document.getElementById('cli-obs').value.trim(),
+        uf:       parseFloat(document.getElementById('cli-uf').value) || null,
+        tasa:     parseFloat(document.getElementById('cli-tasa').value) || null,
+        pie:      parseFloat(document.getElementById('cli-pie').value) || null,
+        anos:     parseFloat(document.getElementById('cli-anos').value) || null,
+      });
+    }
+  } else {
+    clientes.unshift({
+      id:       Date.now(),
+      nombre,
+      telefono: tel,
+      casa_nro: document.getElementById('cli-casa').value || null,
+      estado:   document.getElementById('cli-estado').value,
+      obs:      document.getElementById('cli-obs').value.trim(),
+      fecha,
+      hora,
+      uf:       parseFloat(document.getElementById('cli-uf').value) || null,
+      tasa:     parseFloat(document.getElementById('cli-tasa').value) || null,
+      pie:      parseFloat(document.getElementById('cli-pie').value) || null,
+      anos:     parseFloat(document.getElementById('cli-anos').value) || null,
+    });
+  }
+
+  guardarClientes();
+  renderClientes();
+  document.getElementById('modal-cli-overlay').classList.remove('open');
+}
+
+// ==================== CLIENTES — DESDE COTIZADOR ====================
+function guardarDesdeCotizador() {
+  if (!ultimaCotizacion) return;
+  const { r, c } = ultimaCotizacion;
+  clienteEditandoId = null;
+  limpiarError('error-cli');
+  document.getElementById('modal-cli-titulo').textContent = 'Guardar Cliente';
+  document.getElementById('cli-nombre').value   = document.getElementById('cot-nombre').value;
+  document.getElementById('cli-telefono').value = document.getElementById('cot-telefono').value;
+  document.getElementById('cli-casa').value     = c.nro;
+  document.getElementById('cli-estado').value   = 'nuevo';
+  document.getElementById('cli-obs').value      = '';
+  document.getElementById('cli-uf').value       = ufGlobal || '';
+  document.getElementById('cli-tasa').value     = document.getElementById('cot-tasa').value;
+  document.getElementById('cli-pie').value      = document.getElementById('cot-pie').value;
+  document.getElementById('cli-anos').value     = document.getElementById('cot-anos').value;
+  document.getElementById('modal-cli-overlay').classList.add('open');
+}
+
+// ==================== CLIENTES — ELIMINAR ====================
+function eliminarCliente(id) {
+  const c = clientes.find(x => x.id === id);
+  if (!c) return;
+  if (!confirm('¿Eliminar a ' + c.nombre + '? Esta acción no se puede deshacer.')) return;
+  clientes = clientes.filter(x => x.id !== id);
+  guardarClientes();
+  renderClientes();
+}
+
+// ==================== CLIENTES — WHATSAPP ====================
+function wspCliente(id) {
+  const c = clientes.find(x => x.id === id);
+  if (!c || !c.telefono) return;
+  const tel = c.telefono.replace(/\D/g, '');
+  const nombre = c.nombre || 'Cliente';
+  let msg = 'Hola ' + nombre + ', le contactamos desde Valle Condores.';
+  window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent(msg), '_blank');
+}
+</script>
+</body>
+</html>
